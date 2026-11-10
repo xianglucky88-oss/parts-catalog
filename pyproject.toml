@@ -1,0 +1,12 @@
+[project]
+name = "parts-catalog"
+version = "0.1.0"
+description = "Industrial spare-parts catalog and quotation normalization pipeline"
+requires-python = ">=3.9"
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest>=8.3,<9"]
+
+[project.scripts]
+parts-catalog = "parts_catalog.cli:main"
