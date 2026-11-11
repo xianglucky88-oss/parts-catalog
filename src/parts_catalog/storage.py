@@ -27,5 +27,17 @@ class PartsStore:
     def commit(self) -> None:
         self.connection.commit()
 
+    def rollback(self) -> None:
+        """丢弃最后一次 commit 之后的在途写入，与检查点边界保持一致。"""
+        self.connection.rollback()
+
+    def count_parts(self) -> int:
+        row = self.connection.execute("SELECT COUNT(*) FROM parts").fetchone()
+        return int(row[0])
+
+    def count_quotes(self) -> int:
+        row = self.connection.execute("SELECT COUNT(*) FROM quotes").fetchone()
+        return int(row[0])
+
     def close(self) -> None:
         self.connection.close()
