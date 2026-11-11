@@ -3,5 +3,6 @@
   "private": true,
   "type": "module",
   "engines": {"node": ">=20"},
+  "scripts": {"test": "node --test"},
   "dependencies": {"playwright": "^1.48.0"}
 }

@@ -1,27 +1,32 @@
 import process from "node:process";
+import { pathToFileURL } from "node:url";
 
 const required = ["PORTAL_URL", "PORTAL_USERNAME", "PORTAL_PASSWORD", "PORTAL_QUERY"];
 
-function parseArgs(argv) {
+export function parseArgs(argv) {
   return { dryRun: argv.includes("--dry-run") };
 }
 
-function configuration() {
-  return Object.fromEntries(required.map((key) => [key, process.env[key] ?? ""]));
+export function configuration(env = process.env) {
+  return Object.fromEntries(required.map((key) => [key, env[key] ?? ""]));
 }
 
-function validate(config) {
+export function validate(config) {
   const missing = required.filter((key) => !config[key]);
   if (missing.length) throw new Error(`missing portal configuration: ${missing.join(", ")}`);
 }
 
-async function runDry(config) {
-  console.log(JSON.stringify({ mode: "dry-run", target: config.PORTAL_URL || "not-configured", queryPresent: Boolean(config.PORTAL_QUERY) }));
+export async function runDry(config, log = console.log) {
+  log(JSON.stringify({ mode: "dry-run", target: config.PORTAL_URL || "not-configured", queryPresent: Boolean(config.PORTAL_QUERY) }));
 }
 
-async function runPortal(config) {
+async function launchChromium() {
   const { chromium } = await import("playwright");
-  const browser = await chromium.launch({ headless: true });
+  return chromium.launch({ headless: true });
+}
+
+export async function runPortal(config, { launch = launchChromium, log = console.log } = {}) {
+  const browser = await launch();
   try {
     const page = await browser.newPage();
     await page.goto(config.PORTAL_URL, { waitUntil: "domcontentloaded" });
@@ -35,16 +40,22 @@ async function runPortal(config) {
       stockStatus: node.dataset.stockStatus ?? "unknown",
       price: node.dataset.price ?? null,
     }));
-    console.log(JSON.stringify(result));
+    log(JSON.stringify(result));
   } finally {
     await browser.close();
   }
 }
 
-const config = configuration();
-const { dryRun } = parseArgs(process.argv.slice(2));
-if (dryRun) await runDry(config);
-else {
-  validate(config);
-  await runPortal(config);
+export async function main(argv = process.argv.slice(2), env = process.env) {
+  const config = configuration(env);
+  const { dryRun } = parseArgs(argv);
+  if (dryRun) await runDry(config);
+  else {
+    validate(config);
+    await runPortal(config);
+  }
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  await main();
 }

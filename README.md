@@ -13,3 +13,21 @@ Node 流程只在明确提供 `--dry-run` 时执行模拟；真实运行时通�
 ```bash
 node automation/portal_runner.mjs --dry-run
 ```
+
+## 离线测试
+
+全部为离线测试：Python 侧写入临时 SQLite，Node 侧用内存 fake 替代 Playwright 浏览器，不访问真实站点，也不需要任何凭据。
+
+Python 跨层契约测试（fixture → 规范化 → pipeline → SQLite；stdlib 即可运行，安装 pytest 后 `pytest` 同样收集）：
+
+```bash
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+```
+
+Node 采集端边界测试（成功、空结果、浏览器异常）：
+
+```bash
+npm --prefix automation test
+```
+
+当前基线：Python 14 项中 4 项失败、Node 11 项中 2 项失败，失败项即测试暴露出的实现缺陷（报价静默覆盖、缺字段报错类型、CLI 输出非 JSON、空结果未结构化、关闭异常掩盖根因），修复前不应视为回归通过。
