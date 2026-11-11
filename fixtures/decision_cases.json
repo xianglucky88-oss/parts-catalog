@@ -1,0 +1,13 @@
+[
+  {"supplier":"Northstar","part_number":"AB-1204","brand":"Acme Inc.","description":"Sealed bearing 20 mm","unit":"ea","package_quantity":1,"lead_time_days":4,"stock_status":"In Stock","price":"18.50"},
+  {"supplier":"BoltCo","part_number":"AB 1204","brand":"ACME","description":"Sealed bearing 20mm","unit":"EA","package_quantity":1,"lead_time_days":3,"stock_status":"available","price":"17.25"},
+  {"supplier":"Acme Direct","part_number":"ab-1204","brand":"ACME","description":"Sealed bearing","unit":"EA","package_quantity":1,"lead_time_days":2,"stock_status":"available","price":"17.25"},
+  {"supplier":"MegaParts","part_number":"AB1204","brand":"ACME","description":"Sealed bearing","unit":"EA","package_quantity":1,"lead_time_days":6,"stock_status":"unknown","price":null},
+  {"supplier":"GhostSupply","part_number":"AB1204","brand":"ACME","description":"Sealed bearing","unit":"EA","package_quantity":1,"lead_time_days":1,"stock_status":"Out of Stock","price":"10.00"},
+
+  {"supplier":"Northstar","part_number":"CD-5500","brand":"Globex","description":"Coupling","unit":"EA","package_quantity":2,"lead_time_days":9,"stock_status":"backorder","price":"42.00"},
+  {"supplier":"BoltCo","part_number":"CD5500","brand":"GLOBEX","description":"Coupling","unit":"EA","package_quantity":2,"lead_time_days":null,"stock_status":"backorder","price":"42.00"},
+  {"supplier":"Acme Direct","part_number":"CD5500","brand":"Globex","description":"Coupling","unit":"EA","package_quantity":2,"lead_time_days":9,"stock_status":"backorder","price":"42.00"},
+
+  {"supplier":"MegaParts","part_number":"EF-9","brand":"Initech","description":"Filter","unit":"EA","package_quantity":1,"lead_time_days":12,"stock_status":"Out of Stock","price":null}
+]
