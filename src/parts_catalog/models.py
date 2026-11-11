@@ -34,3 +34,17 @@ class Quote:
     lead_time_days: int | None
     stock_status: str
     source_ref: str
+
+
+@dataclass(frozen=True)
+class BatchRecord:
+    batch_id: str
+    supplier: str
+    queried_at: str
+    query_part_number: str
+    status: str
+    received_count: int
+    imported_count: int
+    failed_count: int
+    source_ref: str
+    ingested_at: str

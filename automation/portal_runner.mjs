@@ -1,9 +1,22 @@
+import { randomUUID } from "node:crypto";
+import { writeFile } from "node:fs/promises";
 import process from "node:process";
 
-const required = ["PORTAL_URL", "PORTAL_USERNAME", "PORTAL_PASSWORD", "PORTAL_QUERY"];
+// Emits batches per contract/batch-envelope.schema.json. The collector never
+// writes the business database; the Python importer consumes this envelope.
+const CONTRACT_VERSION = "1.0";
+const required = ["PORTAL_URL", "PORTAL_USERNAME", "PORTAL_PASSWORD", "PORTAL_QUERY", "PORTAL_SUPPLIER"];
 
 function parseArgs(argv) {
-  return { dryRun: argv.includes("--dry-run") };
+  const args = { dryRun: false, out: null };
+  for (let i = 0; i < argv.length; i += 1) {
+    if (argv[i] === "--dry-run") args.dryRun = true;
+    else if (argv[i] === "--out") {
+      args.out = argv[i + 1];
+      i += 1;
+    }
+  }
+  return args;
 }
 
 function configuration() {
@@ -15,11 +28,30 @@ function validate(config) {
   if (missing.length) throw new Error(`missing portal configuration: ${missing.join(", ")}`);
 }
 
-async function runDry(config) {
-  console.log(JSON.stringify({ mode: "dry-run", target: config.PORTAL_URL || "not-configured", queryPresent: Boolean(config.PORTAL_QUERY) }));
+function envelope(config, results, notes) {
+  return {
+    contract_version: CONTRACT_VERSION,
+    batch_id: process.env.BATCH_ID ?? randomUUID(),
+    supplier: config.PORTAL_SUPPLIER || "not-configured",
+    queried_at: new Date().toISOString(),
+    query: { part_number: config.PORTAL_QUERY || "not-configured" },
+    results,
+    ...(notes ? { notes } : {}),
+  };
 }
 
-async function runPortal(config) {
+async function emit(payload, out) {
+  const text = `${JSON.stringify(payload, null, 2)}\n`;
+  if (out) await writeFile(out, text, "utf8");
+  else process.stdout.write(text);
+}
+
+async function runDry(config, out) {
+  // Simulation only: never touches the portal, always an explicitly empty batch.
+  await emit(envelope(config, [], "dry-run simulation; no portal access performed"), out);
+}
+
+async function runPortal(config, out) {
   const { chromium } = await import("playwright");
   const browser = await chromium.launch({ headless: true });
   try {
@@ -30,21 +62,35 @@ async function runPortal(config) {
     await page.getByRole("button", { name: /sign in|login/i }).click();
     await page.getByLabel("Part number").fill(config.PORTAL_QUERY);
     await page.getByRole("button", { name: /search/i }).click();
-    const result = await page.locator("[data-part-number]").first().evaluate((node) => ({
-      partNumber: node.dataset.partNumber,
-      stockStatus: node.dataset.stockStatus ?? "unknown",
-      price: node.dataset.price ?? null,
-    }));
-    console.log(JSON.stringify(result));
+    const results = [];
+    for (const row of await page.locator("[data-part-number]").all()) {
+      try {
+        const part = await row.evaluate((node) => ({
+          part_number: node.dataset.partNumber,
+          brand: node.dataset.brand ?? "",
+          description: node.dataset.description ?? "",
+          unit: node.dataset.unit ?? "EA",
+          package_quantity: node.dataset.packageQuantity ? Number(node.dataset.packageQuantity) : 1,
+          lead_time_days: node.dataset.leadTimeDays ? Number(node.dataset.leadTimeDays) : null,
+          stock_status: node.dataset.stockStatus ?? "unknown",
+          price: node.dataset.price ?? null,
+        }));
+        if (!part.part_number) throw new Error("row is missing data-part-number");
+        results.push({ status: "ok", part: { ...part, supplier: config.PORTAL_SUPPLIER } });
+      } catch (error) {
+        results.push({ status: "error", error: { code: "extract_failed", message: String(error?.message ?? error) } });
+      }
+    }
+    await emit(envelope(config, results), out);
   } finally {
     await browser.close();
   }
 }
 
 const config = configuration();
-const { dryRun } = parseArgs(process.argv.slice(2));
-if (dryRun) await runDry(config);
+const { dryRun, out } = parseArgs(process.argv.slice(2));
+if (dryRun) await runDry(config, out);
 else {
   validate(config);
-  await runPortal(config);
+  await runPortal(config, out);
 }

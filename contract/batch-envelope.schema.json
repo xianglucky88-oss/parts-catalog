@@ -1,0 +1,109 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://parts-catalog.local/contract/batch-envelope.schema.json",
+  "title": "SupplierCollectionBatchEnvelope",
+  "description": "Cross-runtime handoff contract: a Node.js collector emits one envelope per supplier query batch; the Python importer consumes it. Re-submission of the same batch_id must be treated as a duplicate and never re-imported; retries must use a new batch_id.",
+  "type": "object",
+  "required": ["contract_version", "batch_id", "supplier", "queried_at", "query", "results"],
+  "additionalProperties": false,
+  "properties": {
+    "contract_version": {
+      "const": "1.0",
+      "description": "Contract version emitted by the collector. The importer rejects any other version."
+    },
+    "batch_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique batch identifier assigned by the collector. The pipeline uses it for idempotent, exactly-once ingestion."
+    },
+    "supplier": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Supplier identifier the batch was collected from."
+    },
+    "queried_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of when the supplier portal was queried."
+    },
+    "query": {
+      "type": "object",
+      "required": ["part_number"],
+      "additionalProperties": false,
+      "properties": {
+        "part_number": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Queried material / part number as typed into the supplier portal."
+        },
+        "brand": {
+          "type": "string",
+          "description": "Optional brand filter used in the query."
+        }
+      }
+    },
+    "results": {
+      "type": "array",
+      "description": "Raw per-row results in portal order. An empty array is a valid, explicitly empty batch.",
+      "items": { "$ref": "#/$defs/result" }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Optional free-form collector note (e.g. simulation marker)."
+    }
+  },
+  "$defs": {
+    "result": {
+      "type": "object",
+      "required": ["status"],
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": ["ok", "error"],
+          "description": "Per-row outcome: 'ok' carries a raw supplier part, 'error' carries a structured extraction failure. A batch mixing both is a partial failure."
+        },
+        "part": {
+          "$ref": "#/$defs/supplierPart",
+          "description": "Raw supplier part payload. Required when status is 'ok'."
+        },
+        "error": {
+          "$ref": "#/$defs/resultError",
+          "description": "Structured failure detail. Required when status is 'error'."
+        }
+      }
+    },
+    "supplierPart": {
+      "type": "object",
+      "required": ["supplier", "part_number", "brand"],
+      "additionalProperties": true,
+      "properties": {
+        "supplier": { "type": "string", "minLength": 1 },
+        "part_number": { "type": "string", "minLength": 1 },
+        "brand": { "type": "string" },
+        "description": { "type": "string" },
+        "unit": { "type": "string" },
+        "package_quantity": { "type": "integer", "minimum": 1 },
+        "lead_time_days": { "type": ["integer", "null"], "minimum": 0 },
+        "stock_status": { "type": "string" },
+        "price": { "type": ["string", "number", "null"] }
+      }
+    },
+    "resultError": {
+      "type": "object",
+      "required": ["code", "message"],
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Stable machine-readable failure code, e.g. 'extract_failed'."
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable failure detail."
+        }
+      }
+    }
+  }
+}
