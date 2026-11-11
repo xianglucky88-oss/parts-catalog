@@ -4,6 +4,16 @@ from decimal import Decimal
 
 
 @dataclass(frozen=True)
+class RawPartEnvelope:
+    """A raw source record plus the provenance needed to attribute failures."""
+    record: dict
+    supplier: str | None
+    contract_version: str | None
+    origin: str
+    locator: str
+
+
+@dataclass(frozen=True)
 class SupplierPart:
     supplier: str
     part_number: str

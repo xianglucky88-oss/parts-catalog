@@ -1,5 +1,7 @@
 from __future__ import annotations
 import argparse
+import sys
+from .adapters import SourceBatchRejectedError, default_registry
 from .sources import JsonFixtureSource
 from .storage import PartsStore
 from .pipeline import PartsPipeline
@@ -13,7 +15,12 @@ def main() -> None:
     args = parser.parse_args()
     store = PartsStore(args.database)
     try:
-        count = PartsPipeline(JsonFixtureSource(args.fixture), store).run(args.currency, args.fixture)
+        pipeline = PartsPipeline(JsonFixtureSource(args.fixture), store, default_registry())
+        count = pipeline.run(args.currency, args.fixture)
+    except SourceBatchRejectedError as exc:
+        print(exc, file=sys.stderr)
+        sys.exit(1)
+    else:
         print({"processed": count, "database": args.database})
     finally:
         store.close()

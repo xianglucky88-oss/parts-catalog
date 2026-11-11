@@ -1,0 +1,20 @@
+{
+  "supplier": "Vertex",
+  "contract_version": "2.1",
+  "records": [
+    {
+      "sku": {"code": "vx-88.10-q", "maker": "Vertex Tools"},
+      "naming": {"title": "  Deep-groove   bearing 25 mm "},
+      "pack": {"uom": "box", "qty": 10},
+      "availability": {"state": "IN_STOCK", "lead_days": 7},
+      "pricing": {"amount": "102.40"}
+    },
+    {
+      "sku": {"code": "TR 55/2", "maker": "northstar ltd"},
+      "naming": {"title": "Thrust roller 55 mm"},
+      "pack": {"uom": "EA", "qty": 1},
+      "availability": {"state": "BACKORDER", "lead_days": null},
+      "pricing": {"amount": "N/A"}
+    }
+  ]
+}
