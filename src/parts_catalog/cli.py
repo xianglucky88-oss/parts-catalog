@@ -13,8 +13,13 @@ def main() -> None:
     args = parser.parse_args()
     store = PartsStore(args.database)
     try:
-        count = PartsPipeline(JsonFixtureSource(args.fixture), store).run(args.currency, args.fixture)
-        print({"processed": count, "database": args.database})
+        result = PartsPipeline(JsonFixtureSource(args.fixture), store).run(args.currency, args.fixture)
+        print({
+            "processed": result.processed,
+            "exact_unit_costs": result.exact_unit_costs,
+            "incomparable": result.incomparable,
+            "database": args.database,
+        })
     finally:
         store.close()
 

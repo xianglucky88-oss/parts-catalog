@@ -1,0 +1,8 @@
+[
+  {"supplier":"Acme Direct","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt","unit":"EA","package_quantity":1,"lead_time_days":3,"stock_status":"In Stock","price":"0.15"},
+  {"supplier":"Bolt Wholesale","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt, box of 100","unit":"BOX","package_quantity":100,"lead_time_days":6,"stock_status":"Available","price":"12.00"},
+  {"supplier":"Crate Supply","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt, case quantity unknown","unit":"CASE","lead_time_days":8,"stock_status":"Available","price":"48.00"},
+  {"supplier":"Metric Metals","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt priced by mass","unit":"KG","package_quantity":1,"lead_time_days":10,"stock_status":"Available","price":"9.40"},
+  {"supplier":"Odd Traders","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt, unregistered unit","unit":"PALLET","package_quantity":500,"lead_time_days":12,"stock_status":"unknown","price":"60.00"},
+  {"supplier":"Pending Quoter","part_number":"FX-100","brand":"ACME","description":"M8 hex bolt, price not yet quoted","unit":"BOX","package_quantity":50,"lead_time_days":null,"stock_status":"backorder","price":null}
+]

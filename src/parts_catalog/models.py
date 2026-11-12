@@ -1,5 +1,5 @@
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 
 
@@ -10,7 +10,7 @@ class SupplierPart:
     brand: str
     description: str
     unit: str
-    package_quantity: int
+    package_quantity: int | None
     lead_time_days: int | None
     stock_status: str
     price: Decimal | None
@@ -22,7 +22,7 @@ class NormalizedPart:
     brand: str
     description: str
     unit: str
-    package_quantity: int
+    package_quantity: int | None
 
 
 @dataclass(frozen=True)
@@ -34,3 +34,14 @@ class Quote:
     lead_time_days: int | None
     stock_status: str
     source_ref: str
+    # Packaging dimension of a validated quote.  A missing package_quantity is
+    # an explicit unknown: it must never be silently defaulted to one piece.
+    unit: str = "EA"
+    package_quantity: int | None = None
+
+
+@dataclass(frozen=True)
+class PipelineResult:
+    processed: int
+    exact_unit_costs: int
+    incomparable: int

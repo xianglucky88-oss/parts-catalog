@@ -16,15 +16,36 @@ def canonical_brand(value: str) -> str:
     return _BRAND_ALIASES.get(cleaned, cleaned.upper())
 
 
+def parse_package_quantity(raw: dict, part_number: object = None) -> int | None:
+    """Parse package_quantity without guessing.
+
+    Absent or null means the packaging dimension is genuinely unknown and is
+    preserved as None rather than defaulted to 1.  A present value must be a
+    positive integer; floats with a fractional part are rejected.
+    """
+    if "package_quantity" not in raw or raw["package_quantity"] in (None, ""):
+        return None
+    value = raw["package_quantity"]
+    if isinstance(value, bool):
+        raise ValueError(f"invalid package_quantity for {part_number}")
+    try:
+        quantity = int(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid package_quantity for {part_number}") from exc
+    if isinstance(value, float) and not value.is_integer():
+        raise ValueError(f"invalid package_quantity for {part_number}")
+    if quantity < 1:
+        raise ValueError("package_quantity must be positive")
+    return quantity
+
+
 def normalize_part(raw: dict) -> SupplierPart:
     raw_price = raw.get("price")
     try:
         price = Decimal(str(raw_price)) if raw_price not in (None, "", "N/A") else None
     except InvalidOperation as exc:
         raise ValueError(f"invalid price for {raw.get('part_number')}") from exc
-    quantity = int(raw.get("package_quantity", 1))
-    if quantity < 1:
-        raise ValueError("package_quantity must be positive")
+    quantity = parse_package_quantity(raw, raw.get("part_number"))
     return SupplierPart(
         supplier=str(raw["supplier"]).strip(),
         part_number=canonical_part_number(str(raw["part_number"])),
@@ -43,4 +64,14 @@ def to_catalog_part(part: SupplierPart) -> NormalizedPart:
 
 
 def to_quote(part: SupplierPart, currency: str, source_ref: str) -> Quote:
-    return Quote(part.part_number, part.supplier, currency.upper(), part.price, part.lead_time_days, part.stock_status, source_ref)
+    return Quote(
+        canonical_number=part.part_number,
+        supplier=part.supplier,
+        currency=currency.upper(),
+        price=part.price,
+        lead_time_days=part.lead_time_days,
+        stock_status=part.stock_status,
+        source_ref=source_ref,
+        unit=part.unit,
+        package_quantity=part.package_quantity,
+    )
