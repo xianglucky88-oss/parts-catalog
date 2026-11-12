@@ -1,0 +1,4 @@
+[
+  {"supplier":"Acme Direct","part_number":"AB1204","brand":"Acme Inc.","description":"Sealed bearing 20 mm","unit":"EA","package_quantity":1,"lead_time_days":8,"stock_status":"Backorder","price":"19.30"},
+  {"supplier":"Acme Direct","part_number":"CS770","brand":"Northstar Ltd","description":"Ceramic capacitor 47uF","unit":"EA","package_quantity":10,"lead_time_days":4,"stock_status":"Out of Stock","price":null}
+]

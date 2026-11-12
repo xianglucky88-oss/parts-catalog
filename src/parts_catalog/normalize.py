@@ -1,7 +1,7 @@
 from __future__ import annotations
 import re
 from decimal import Decimal, InvalidOperation
-from .models import NormalizedPart, Quote, SupplierPart
+from .models import NormalizedPart, Quote, ScopeEntry, SupplierPart
 
 _BRAND_ALIASES = {"acme inc.": "ACME", "acme": "ACME", "northstar ltd": "NORTHSTAR"}
 _STATUS_ALIASES = {"in stock": "available", "available": "available", "out of stock": "unavailable", "backorder": "backorder"}
@@ -44,3 +44,18 @@ def to_catalog_part(part: SupplierPart) -> NormalizedPart:
 
 def to_quote(part: SupplierPart, currency: str, source_ref: str) -> Quote:
     return Quote(part.part_number, part.supplier, currency.upper(), part.price, part.lead_time_days, part.stock_status, source_ref)
+
+
+def to_scope_entry(raw: dict) -> ScopeEntry:
+    """Normalize one entry of a query-scope manifest into the canonical
+    (supplier, canonical_number) cell that a collection run pins."""
+    try:
+        supplier = str(raw["supplier"]).strip()
+        part_number = canonical_part_number(str(raw["part_number"]))
+    except KeyError as exc:
+        raise ValueError(f"scope entry missing field: {exc}") from exc
+    if not supplier:
+        raise ValueError("scope entry requires a non-empty supplier")
+    if not part_number:
+        raise ValueError("scope entry requires a part number")
+    return ScopeEntry(supplier, part_number)

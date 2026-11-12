@@ -1,0 +1,6 @@
+[
+  {"supplier":"Northstar","part_number":"AB1204","brand":"ACME","description":"Sealed bearing 20mm","unit":"EA","package_quantity":1,"lead_time_days":5,"stock_status":"Available","price":"18.75"},
+  {"supplier":"Northstar","part_number":"CS770","brand":"Northstar Ltd","description":"Ceramic capacitor 47uF","unit":"EA","package_quantity":10,"lead_time_days":2,"stock_status":"In Stock","price":"9.40"},
+  {"supplier":"Acme Direct","part_number":"AB-120/4","brand":"Acme Inc.","description":"Sealed bearing 20 mm","unit":"EA","package_quantity":1,"lead_time_days":7,"stock_status":"Backorder","price":"19.10"},
+  {"supplier":"Acme Direct","part_number":"CS770","brand":"Northstar Ltd","description":"Ceramic capacitor 47uF","unit":"EA","package_quantity":10,"lead_time_days":3,"stock_status":"Available","price":"9.05"}
+]
