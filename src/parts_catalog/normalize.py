@@ -26,7 +26,7 @@ def normalize_part(raw: dict) -> SupplierPart:
     if quantity < 1:
         raise ValueError("package_quantity must be positive")
     return SupplierPart(
-        supplier=str(raw["supplier"]).strip(),
+        supplier=str(raw.get("supplier", "")).strip(),
         part_number=canonical_part_number(str(raw["part_number"])),
         brand=canonical_brand(str(raw["brand"])),
         description=" ".join(str(raw.get("description", "")).split()),
@@ -42,5 +42,5 @@ def to_catalog_part(part: SupplierPart) -> NormalizedPart:
     return NormalizedPart(part.part_number, part.brand, part.description, part.unit, part.package_quantity)
 
 
-def to_quote(part: SupplierPart, currency: str, source_ref: str) -> Quote:
-    return Quote(part.part_number, part.supplier, currency.upper(), part.price, part.lead_time_days, part.stock_status, source_ref)
+def to_quote(part: SupplierPart, currency: str, source_ref: str, supplier_entity_id: str | None = None) -> Quote:
+    return Quote(part.part_number, part.supplier, currency.upper(), part.price, part.lead_time_days, part.stock_status, source_ref, supplier_entity_id)

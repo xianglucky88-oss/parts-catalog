@@ -1,0 +1,22 @@
+{
+  "entities": [
+    {"entity_id": "SUP-NORTHSTAR", "display_name": "Northstar Industrial Group", "created_by": "handover"},
+    {"entity_id": "SUP-MERIDIAN-A", "display_name": "Meridian Components A", "created_by": "handover"},
+    {"entity_id": "SUP-MERIDIAN-B", "display_name": "Meridian Holdings B", "created_by": "handover"}
+  ],
+  "aliases": [
+    {"alias": "NS Trading", "entity_id": "SUP-NORTHSTAR", "basis": "old_portal_account", "source_ref": "handover/2026-11", "confirmed": true},
+    {"alias": "Northstar", "entity_id": "SUP-NORTHSTAR", "basis": "new_group_name", "source_ref": "handover/2026-11", "confirmed": true},
+    {"alias": "Meridian", "entity_id": "SUP-MERIDIAN-A", "basis": "regional_alias", "source_ref": "handover/2026-11", "confirmed": true},
+    {"alias": "Meridian", "entity_id": "SUP-MERIDIAN-B", "basis": "regional_alias", "source_ref": "handover/2026-11", "confirmed": true}
+  ],
+  "parts": [
+    {"supplier": "Northstar", "part_number": "AB-120 / 4", "brand": "Acme Inc.", "description": "Sealed bearing 20 mm", "unit": "ea", "package_quantity": 1, "lead_time_days": 4, "stock_status": "In Stock", "price": "18.50"},
+    {"supplier": "NS Trading", "part_number": "AB-120 / 4", "brand": "ACME", "description": "Sealed bearing 20 mm", "unit": "EA", "package_quantity": 1, "lead_time_days": 6, "stock_status": "Available", "price": "18.90"},
+    {"supplier": "Acme Trading", "part_number": "BRG-6204", "brand": "Northstar Ltd", "description": "Deep groove ball bearing 20x47x14", "unit": "ea", "package_quantity": 10, "lead_time_days": 7, "stock_status": "In Stock", "price": "4.20"},
+    {"supplier": "ACME trading", "part_number": "BRG-6205", "brand": "Northstar Ltd", "description": "Deep groove ball bearing 25x52x15", "unit": "ea", "package_quantity": 10, "lead_time_days": 7, "stock_status": "Backorder", "price": "5.10"},
+    {"supplier": "Meridian", "part_number": "OR-70-25", "brand": "ACME", "description": "O-ring 70 Shore 25 mm", "unit": "pk", "package_quantity": 100, "lead_time_days": 3, "stock_status": "Available", "price": "12.00"},
+    {"supplier": "", "part_number": "GRF-88", "brand": "ACME", "description": "Grease cartridge 400 g", "unit": "ea", "package_quantity": 1, "lead_time_days": null, "stock_status": "unknown", "price": "N/A"},
+    {"supplier": "North Star", "part_number": "FLT-HYD-10", "brand": "Northstar Ltd", "description": "Hydraulic filter element 10 um", "unit": "ea", "package_quantity": 1, "lead_time_days": 14, "stock_status": "Backorder", "price": "32.40"}
+  ]
+}

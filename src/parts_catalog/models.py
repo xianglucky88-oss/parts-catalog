@@ -34,3 +34,4 @@ class Quote:
     lead_time_days: int | None
     stock_status: str
     source_ref: str
+    supplier_entity_id: str | None = None
