@@ -1,0 +1,10 @@
+[
+  {"supplier":"Northstar","part_number":"AB-120 / 4","brand":"Acme Inc.","description":"Sealed bearing 20 mm","unit":"ea","package_quantity":1,"lead_time_days":4,"stock_status":"In Stock","price":"18.50","currency":"USD"},
+  {"supplier":"AcmeDirect","part_number":"AB-1204","brand":"ACME","description":"Sealed bearing 20mm, lowercase currency","unit":"EA","package_quantity":1,"lead_time_days":5,"stock_status":"Available","price":" 19.99 ","currency":"usd"},
+  {"supplier":"PrecisionParts","part_number":"CD-9001","brand":"Northstar Ltd","description":"Coupling, padded currency","unit":"EA","package_quantity":2,"lead_time_days":7,"stock_status":"Backorder","price":"120.00","currency":" eur "},
+  {"supplier":"OverseasCo","part_number":"IJ-4005","brand":"NORTHSTAR","description":"Unknown but well-formed currency","unit":"EA","package_quantity":1,"lead_time_days":14,"stock_status":"available","price":"55.25","currency":"CHF"},
+  {"supplier":"LegacyBroker","part_number":"GH-3004","brand":"ACME","description":"Legacy text price","unit":"EA","package_quantity":1,"lead_time_days":null,"stock_status":"unknown","price":"call for price","currency":"USD"},
+  {"supplier":"DataIssueCo","part_number":"EF-2002","brand":"ACME","description":"NaN price","unit":"EA","package_quantity":1,"lead_time_days":null,"stock_status":"unknown","price":"NaN","currency":"USD"},
+  {"supplier":"DataIssueCo","part_number":"EF-2003","brand":"ACME","description":"Infinity price","unit":"EA","package_quantity":1,"lead_time_days":null,"stock_status":"unknown","price":"Infinity","currency":"USD"},
+  {"supplier":"EmptyQuote","part_number":"KL-5006","brand":"ACME","description":"Missing price","unit":"EA","package_quantity":1,"lead_time_days":14,"stock_status":"available","price":null,"currency":"GBP"}
+]

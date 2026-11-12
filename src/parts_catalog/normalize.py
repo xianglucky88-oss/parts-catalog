@@ -16,12 +16,22 @@ def canonical_brand(value: str) -> str:
     return _BRAND_ALIASES.get(cleaned, cleaned.upper())
 
 
-def normalize_part(raw: dict) -> SupplierPart:
-    raw_price = raw.get("price")
+def _coerce_raw_price(raw_price):
+    """尽力把价格收敛为 Decimal；无法解析时保留原始值，交由准入闸判定。
+
+    这里不抛异常、不静默丢弃：NaN/Infinity 会成为非有限 Decimal，
+    历史价格文本则原样保留，确保任何输入都能带着原始值进入留痕。
+    """
+    if raw_price in (None, "", "N/A"):
+        return None
     try:
-        price = Decimal(str(raw_price)) if raw_price not in (None, "", "N/A") else None
-    except InvalidOperation as exc:
-        raise ValueError(f"invalid price for {raw.get('part_number')}") from exc
+        return Decimal(str(raw_price))
+    except InvalidOperation:
+        return raw_price
+
+
+def normalize_part(raw: dict) -> SupplierPart:
+    price = _coerce_raw_price(raw.get("price"))
     quantity = int(raw.get("package_quantity", 1))
     if quantity < 1:
         raise ValueError("package_quantity must be positive")
@@ -43,4 +53,5 @@ def to_catalog_part(part: SupplierPart) -> NormalizedPart:
 
 
 def to_quote(part: SupplierPart, currency: str, source_ref: str) -> Quote:
-    return Quote(part.part_number, part.supplier, currency.upper(), part.price, part.lead_time_days, part.stock_status, source_ref)
+    # 不在入口处 upper()：保留原始货币文本，由准入闸负责规范化与受控校验。
+    return Quote(part.part_number, part.supplier, currency, part.price, part.lead_time_days, part.stock_status, source_ref)
